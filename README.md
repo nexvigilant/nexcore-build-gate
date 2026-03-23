@@ -1,46 +1,40 @@
 # nexcore-build-gate
 
-Build coordination and CI/CD gatekeeper for the NexVigilant Core kernel. This crate manages exclusive access to Cargo operations in multi-agent environments and uses content hashing to skip redundant builds.
+Part of the [NexVigilant](https://nexvigilant.com) pharmacovigilance platform.
 
-## Intent
-To prevent race conditions and resource contention during high-frequency development cycles. It ensures that only one agent or process can trigger a build or test run at a time, while optimizing performance through rigorous change detection (hashing).
+## About NexVigilant
 
-## T1 Grounding (Lex Primitiva)
-Dominant Primitives:
-- **∂ (Boundary)**: The primary primitive for enforcing build gates and locking access.
-- **κ (Comparison)**: Used for comparing content hashes to determine if a build is necessary.
-- **π (Persistence)**: Manages the persistent lock file (`/tmp/nexcore-cargo.lock`) and hash cache.
-- **→ (Causality)**: Orchestrates the sequential flow of hashing → locking → building → recording.
+NexVigilant makes pharmacovigilance accessible. We build open computation tools for drug safety signal detection, causality assessment, and regulatory intelligence — because patient safety knowledge should be available to everyone willing to learn.
 
-## Core Features
-- **Exclusive Build Lock**: Prevents multiple `cargo` instances from running simultaneously.
-- **Content Hashing**: Scans source files (`.rs`, `.toml`, `.lock`) to detect structural changes.
-- **Result Caching**: Stores the outcome of the last successful build to avoid re-work.
-- **Lock Timeout**: Gracefully handles stale locks or long-running builds with configurable timeouts.
+**Live tools:** [mcp.nexvigilant.com](https://mcp.nexvigilant.com) — 193 MCP tools for AI-powered pharmacovigilance, free to connect.
 
-## SOPs for Use
-### Running a Coordinated Build
-```rust
-use nexcore_build_gate::{run_cargo, find_workspace_root};
-use std::path::Path;
+## Installation
 
-let root = find_workspace_root(Path::new(".")).unwrap();
-let result = run_cargo(&root, &["build", "--release"], false)?;
-
-if result.success {
-    println!("Build verified and recorded.");
-}
+```toml
+[dependencies]
+nexcore-build-gate = { git = "https://github.com/nexvigilant/nexcore-build-gate" }
 ```
 
-### Checking Lock Status
-Before starting a long-running task, verify if the gate is clear:
-```rust
-use nexcore_build_gate::{lock_status, LockStatus};
-
-if lock_status() == LockStatus::Held {
-    println!("Build in progress, waiting...");
-}
-```
+> **Note:** This crate was developed as part of the [nexcore](https://github.com/nexvigilant) workspace. Some dependencies may reference workspace-level configuration. See individual `Cargo.toml` for details.
 
 ## License
-Proprietary. Copyright (c) 2026 NexVigilant LLC. All Rights Reserved.
+
+**Personal, non-commercial use only.** See [LICENSE](LICENSE) for full terms.
+
+Organizations of any kind must have explicit written permission for use.
+Contact [matthew@nexvigilant.com](mailto:matthew@nexvigilant.com) for licensing.
+
+## Contributing
+
+Contributions are welcome under the following terms:
+
+1. **Fork & PR.** Fork this repository, make your changes, and submit a pull request.
+2. **CLA.** By submitting a pull request, you agree that your contributions become the property of NexVigilant LLC under the same license terms.
+3. **Code quality.** All Rust code must pass `cargo clippy -- -D warnings` and `cargo fmt --check`.
+4. **Tests.** New functionality should include tests. Run `cargo test --lib` before submitting.
+
+For questions or discussion, open an issue or reach out at [matthew@nexvigilant.com](mailto:matthew@nexvigilant.com).
+
+---
+
+Built by [NexVigilant LLC](https://nexvigilant.com) — Pharmacovigilance for NexVigilants.
