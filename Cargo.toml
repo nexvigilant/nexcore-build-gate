@@ -1,0 +1,32 @@
+
+[package]
+name = "nexcore-build-gate"
+version = "1.0.0"
+edition = "2024"
+authors = ["NexVigilant Team <team@nexvigilant.com>"]
+license = "LicenseRef-Proprietary"
+description = "Cargo build coordination for multi-agent environments"
+keywords = ["cargo", "build", "coordination", "lock", "agent"]
+categories = ["development-tools"]
+
+[[bin]]
+name = "build-gate"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5.11", features = ["derive", "cargo", "env"] }
+nexcore-fs = { workspace = true }
+nexcore-hash = { workspace = true }
+nexcore-codec = { version = "0.1.0", path = "../nexcore-codec", registry = "nexcore" }
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = { version = "1.0.120" }
+nexcore-chrono = { workspace = true }
+tracing = { version = "0.1.40" }
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+
+# File locking
+fs2 = "0.4"
+
+
+[lints]
+workspace = true
